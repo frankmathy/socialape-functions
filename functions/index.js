@@ -7,7 +7,7 @@ const FBAuth = require('./util/fbAuth');
 const { db } = require('./util/admin');
 
 const { getAllScreams, postOneScream, getScream, commentOnScream, likeScream, unlikeScream, deleteScream } = require('./handlers/screams');
-const { signup, login, uploadImage, addUserDetails, getAuthenticatedUser } = require('./handlers/users');
+const { signup, login, uploadImage, addUserDetails, getAuthenticatedUser, getUserDetails } = require('./handlers/users');
 
 // Scream routes
 app.get('/screams', getAllScreams);
@@ -24,6 +24,8 @@ app.post('/login', login);
 app.post('/user/image', FBAuth, uploadImage);
 app.post('/user', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getAuthenticatedUser);
+app.get('/user/:handle', getUserDetails);
+// app.get('/notifications', FBAuth, markNotificationsRead);
 
 exports.api = functions.region('europe-west2').https.onRequest(app);
 
