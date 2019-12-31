@@ -31,9 +31,9 @@ exports.api = functions.region('europe-west2').https.onRequest(app);
 
 exports.createNotificationOnLike = functions.region('europe-west2').firestore.document('likes/{id}')
     .onCreate((snapshot) => {
-        db.doc(`/screams/${snapshot.data().screamId}`).get()
+        return db.doc(`/screams/${snapshot.data().screamId}`).get()
             .then(doc => {
-                if(doc.exists) {
+                if(doc.exists && doc.data().userHandle !== snapshot.data().userHandle) {
                     return db.doc(`/notifications/${snapshot.id}`).set({
                         createdAt: new Date().toISOString(),
                         recipient: doc.data().userHandle,
@@ -44,33 +44,25 @@ exports.createNotificationOnLike = functions.region('europe-west2').firestore.do
                     })
                 }
             })
-            .then(() => {
-                return;
-            })
             .catch(err => {
                 console.error(err);
-                return;
             })
     });
 
     exports.deleteNotificationOnUnLike = functions.region('europe-west2').firestore.document('likes/{id}')
     .onDelete((snapshot) => {
-        db.doc(`/notifications/${snapshot.id}`)
+        return db.doc(`/notifications/${snapshot.id}`)
             .delete()
-            .then(() => {
-                return;
-            })
             .catch(err => {
                 console.log(err);
-                return;
             })
     });
 
 exports.createNotificationOnComment = functions.region('europe-west2').firestore.document('comments/{id}')
     .onCreate((snapshot) => {
-        db.doc(`/screams/${snapshot.data().screamId}`).get()
+        return db.doc(`/screams/${snapshot.data().screamId}`).get()
             .then(doc => {
-                if(doc.exists) {
+                if(doc.exists && doc.data().userHandle !== snapshot.data().userHandle) {
                     return db.doc(`/notifications/${snapshot.id}`).set({
                         createdAt: new Date().toISOString(),
                         recipient: doc.data().userHandle,
@@ -81,11 +73,7 @@ exports.createNotificationOnComment = functions.region('europe-west2').firestore
                     })
                 }
             })
-            .then(() => {
-                return;
-            })
             .catch(err => {
                 console.error(err);
-                return;
             })
     });
